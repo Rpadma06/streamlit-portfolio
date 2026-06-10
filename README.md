@@ -1,17 +1,17 @@
-# 🚀 Financial & MLOps Interactive Analytics Dashboard
+# 🚀 Enterprise AI & MLOps Control Center
 
-A modern, high-performance web prototype built with **Streamlit**, **Pandas**, and **Plotly** to deliver interactive financial analytics and data visualizations.
+A modern, high-performance web prototype built with **Streamlit**, **Pandas**, and **Plotly** to demonstrate real-time predictive modeling, agentic GenAI orchestration, and financial value realization for enterprise telecom networks.
 
-This project was built as a clean, production-ready prototype designed to showcase clean data manipulation pipelines and interactive user experiences for business stakeholders.
+This project bridges the gap between deep MLOps engineering (Multi-Armed Bandits, Population Stability Index, feature stores) and corporate C-suite metrics to showcase data-driven ARPU growth strategies.
 
 ---
 
 ## 🛠️ Tech Stack & Architecture
 
-* **Framework:** Streamlit (Core Web Application Framework)
-* **Data Processing:** Pandas & NumPy (Data Manipulation & Analytics)
-* **Visualizations:** Plotly (Interactive Financial & MLOps Data Charts)
-* **Environment:** Python 3.12+ (Isolated Virtual Environment)
+* **Framework:** Streamlit (Core Web Application Framework & Session State Lifecycle Management)
+* **Data Processing:** Pandas & NumPy (Real-Time Feature Lookup & Pipeline Transformations)
+* **Visualizations:** Plotly Graph Objects (Interactive MLOps Drift & Portfolio Yield Charts)
+* **Environment:** Python 3.12+ / 3.14 (Isolated Virtual Environment)
 
 ---
 
@@ -21,37 +21,13 @@ Want to run this prototype locally on your machine? Follow these simple steps:
 
 ### 1. Clone and Navigate
 ```bash
-git clone https://github.com
+git clone [https://github.com/Rpadma06/streamlit-portfolio.git](https://github.com/Rpadma06/streamlit-portfolio.git)
 cd streamlit-portfolio
-```
-
-### 2. Set Up a Virtual Environment
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-```
-
-### 3. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Launch the Application
-```bash
-streamlit run app_clean.py
-```
 
 ---
 
-## 💡 Key Engineering Features Demonstrated
+## 🤝 Contact & Portfolio
 
-* **Isolated Dependencies:** Managed completely via virtual environments for clean deployment.
-* **Interactive UI:** Leverages Plotly for dynamic, responsive data exploration.
-* **Optimized Performance:** Efficient data handling using Pandas dataframes.
-
----
-
-## 📬 Contact & Portfolio
-* **Developer:** [Padmasree Ravi]
-* **GitHub:** [https://github.com/Rpadma06]
-* **LinkedIn:** [www.linkedin.com/in/06padmasree]
+* **Developer:** Padmasree Ravi
+* **GitHub:** [github.com/Rpadma06](https://github.com/Rpadma06)
+* **LinkedIn:** [linkedin.com/in/06padmasree](https://www.linkedin.com/in/06padmasree)
