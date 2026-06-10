@@ -8,7 +8,6 @@ import time
 st.set_page_config(
     page_title="Enterprise AI & MLOps Control Center", layout="wide")
 
-# Professional Corporate Palette: Dark Slate, Emerald (Success/Growth), Indigo (Tech/Ops)
 st.markdown("""
     <style>
     .metric-card { background-color: #0f172a; padding: 20px; border-radius: 10px; border-left: 5px solid #6366f1; color: white; }
@@ -36,36 +35,46 @@ def get_customer_feature_store():
 
 df_features = get_customer_feature_store()
 
-# --- MULTI-OFFER PROPENSITY MATRIX ENGINE ---
+# --- ENHANCEMENT 2: STATE RESET CALLBACK ---
+
+
+def reset_simulation_state():
+    """Wipes old calculation caches when a new user is picked to prevent UI data silos."""
+    st.session_state.simulated = False
+
+# --- MULTI-OFFER PROPENSITY MATRIX ENGINE (ENHANCED) ---
 
 
 def run_portfolio_propensity_engine(customer_data):
-    scores = {"📦 Premium Utility Perk": 0.20,
-              "🎬 Entertainment Streaming Bundle": 0.15, "🛡️ Device Protection Plan": 0.10}
+    """
+    Simulates a true model score computation. It vectorizes features 
+    and applies a calculated dot product weighting system.
+    """
+    initiatives = ["📦 Premium Utility Perk",
+                   "🎬 Entertainment Streaming Bundle", "🛡️ Device Protection Plan"]
 
-    if customer_data['Brand_Segment'] == 'Value Mobile A':
-        scores['📦 Premium Utility Perk'] += 0.30
-    if customer_data['Monthly_Data_GB'] > 30:
-        scores['📦 Premium Utility Perk'] += 0.25
-    if customer_data['Estimated_Household_Size'] >= 3:
-        scores['📦 Premium Utility Perk'] += 0.20
+    # Mathematical weights resembling a logistic scoring coefficient model
+    features_vector = np.array([
+        customer_data['Tenure_Months'],
+        customer_data['Monthly_Data_GB'],
+        customer_data['Estimated_Household_Size'],
+        1 if customer_data['Autopay_Enabled'] == 'Yes' else 0
+    ])
 
-    if customer_data['Estimated_Household_Size'] >= 2:
-        scores['🎬 Entertainment Streaming Bundle'] += 0.35
-    if customer_data['Monthly_Data_GB'] > 15:
-        scores['🎬 Entertainment Streaming Bundle'] += 0.25
-    if customer_data['Autopay_Enabled'] == 'Yes':
-        scores['🎬 Entertainment Streaming Bundle'] += 0.15
+    # Coefficients for individual initiatives
+    weights = {
+        "📦 Premium Utility Perk": np.array([0.002, 0.010, 0.050, 0.05]),
+        "🎬 Entertainment Streaming Bundle": np.array([0.001, 0.005, 0.120, 0.10]),
+        "🛡️ Device Protection Plan": np.array([-0.005, 0.002, 0.010, 0.02])
+    }
 
-    if "Flagship" in customer_data['Device_Type'] or "iOS" in customer_data['Device_Type']:
-        scores['🛡️ Device Protection Plan'] += 0.50
-    if customer_data['Historical_Sentiment'] == 'Positive':
-        scores['🛡️ Device Protection Plan'] += 0.20
-    if customer_data['Tenure_Months'] < 12:
-        scores['🛡️ Device Protection Plan'] += 0.10
-
-    for offer in scores:
-        scores[offer] = min(round(scores[offer], 2), 0.98)
+    scores = {}
+    for init in initiatives:
+        # Dot product calculation simulating programmatic algorithm inference
+        raw_score = 0.25 + np.dot(features_vector, weights[init])
+        if "🛡️ Device Protection Plan" in init and ("Flagship" in customer_data['Device_Type'] or "iOS" in customer_data['Device_Type']):
+            raw_score += 0.35
+        scores[init] = min(round(float(raw_score), 2), 0.98)
 
     top_offer = max(scores, key=scores.get)
     return scores, top_offer, scores[top_offer]
@@ -114,10 +123,11 @@ with tab1:
     with col1:
         st.subheader(
             " 📥 Inbound Call Center Event",
-            help="PITCH POINTS:\n- Simulates real-time cloud feature-store lookup instantly upon call connection.\n- Solves the 'data silo' problem by unifying billing metrics, historical sentiment, and device hardware profiles instantly."
+            help="PITCH POINTS:\n- Simulates real-time cloud feature-store lookup instantly upon call connection."
         )
+        # ENHANCEMENT 2: Dynamic callback connection added to reset interface properly
         selected_id = st.selectbox(
-            "Select Inbound Customer ID", df_features["Customer_ID"])
+            "Select Inbound Customer ID", df_features["Customer_ID"], on_change=reset_simulation_state)
         customer_record = df_features[df_features["Customer_ID"]
                                       == selected_id].iloc[0]
 
@@ -129,7 +139,7 @@ with tab1:
     with col2:
         st.subheader(
             " ⚙️ Real-Time Engine Execution",
-            help="PITCH POINTS:\n- Evaluates a parallel propensity matrix across all high-margin subscription products simultaneously.\n- Note Latency (71ms): Well within the sub-150ms SLA required for real-time live telecom interactions to eliminate dead air."
+            help="PITCH POINTS:\n- Evaluates a parallel propensity matrix across all high-margin subscription products simultaneously."
         )
 
         if "simulated" not in st.session_state:
@@ -174,19 +184,13 @@ with tab1:
                 lambda x: f"{int(x*100)}%")
             st.table(scores_df)
 
-            st.markdown(
-                "### 🛣️ Next Best Action Routing Decision:",
-                help="PITCH POINTS:\n- Deterministic optimization block split traffic based on statistical certainty thresholds.\n- High-propensity profiles receive specialized routing, while low-propensity/frustrated callers trigger programmatic Offer Suppression to safeguard AHT."
-            )
+            st.markdown("### 🛣️ Next Best Action Routing Decision:")
             if st.session_state.prob > 0.65:
                 st.error(st.session_state.agent_action)
             else:
                 st.info(st.session_state.agent_action)
 
-            st.markdown(
-                "### 🧠 Generative AI Scripting Engine",
-                help="PITCH POINTS:\n- Demonstrates autonomous multi-agent orchestration.\n- Agent 1 acts as a data scientist analyzing device/data telemetry to output a strategic brief.\n- Agent 2 acts as a contextual copywriter, instantly synthesizing hyper-personalized pitch text for the call agent."
-            )
+            st.markdown("### 🧠 Generative AI Scripting Engine")
             st.markdown(
                 f"**🤖 Agent 1 (Behavioral Insight):** <div class='agent-box'>{st.session_state.agent_persona}</div>", unsafe_allow_html=True)
             st.markdown(
@@ -196,10 +200,7 @@ with tab1:
 # TAB 2: MLOPS PIPELINE & DRIFT CONTROL
 # ==========================================
 with tab2:
-    st.header(
-        " 🔍 Continuous Monitoring & Multi-Armed Bandit Orchestration",
-        help="STRATEGIC SUMMARY:\nRepresents our model governance backend. Proves this is an active production ecosystem that continuously auto-tunes and self-protects against behavioral decay over time."
-    )
+    st.header(" 🔍 Continuous Monitoring & Multi-Armed Bandit Orchestration")
     st.write("This pane evaluates architectural stability, concept drift validation, and reinforcement learning routing mechanics.")
 
     m_col1, m_col2, m_col3 = st.columns(3)
@@ -211,15 +212,11 @@ with tab2:
                   value="5%", delta="Auto-Optimizing")
 
     st.write("---")
-
     layout_col1, layout_col2 = st.columns([1, 1])
 
     with layout_col1:
-        st.subheader(
-            " 🛡️ Reinforcement Learning Offer Vector Convergence",
-            help="PITCH POINTS:\n- Standard A/B testing wastes 50% of traffic on losing offers for weeks.\n- Our Multi-Armed Bandit structure uses Thompson Sampling to monitor conversion rates hourly, dynamically pulling traffic from underperforming offers to eliminate revenue regret."
-        )
-        st.markdown("> **Executive Explanation:** Standard A/B testing wastes 50% of traffic on losing offers for weeks. Our Multi-Armed Bandit algorithm monitors conversions in real-time, dynamically shifting routing share to the highest-margin subscription offer per segment to avoid revenue regret.")
+        st.subheader(" 🛡️ Reinforcement Learning Offer Vector Convergence")
+        st.markdown("> **Executive Explanation:** Standard A/B testing wastes 50% of traffic on losing offers for weeks. Our Multi-Armed Bandit algorithm monitors conversions in real-time...")
 
         days = list(range(1, 31))
         utility_share = [40 - (x*0.5) for x in days]
@@ -234,24 +231,12 @@ with tab2:
         fig.add_trace(go.Scatter(x=days, y=protection_share,
                       name='🛡️ Device Protection Plan', line=dict(color='#0f172a', width=3)))
 
-        fig.update_layout(
-            title="Automated Routing Shift Matrix (30 Day Exploitation Loop)",
-            xaxis_title="Day of Experiment Window",
-            yaxis_title="Allocated Queue Percentage (%)",
-            height=350,
-            template="seaborn",
-            margin=dict(l=20, r=20, t=40, b=20)
-        )
+        fig.update_layout(title="Automated Routing Shift Matrix", xaxis_title="Day",
+                          yaxis_title="Allocated %", height=350, template="seaborn")
         st.plotly_chart(fig, use_container_width=True)
 
     with layout_col2:
-        st.subheader(
-            " 🚨 Production Feature Drift Monitor",
-            help="PITCH POINTS:\n- Acts as an automated data smoke detector using the Population Stability Index (PSI).\n- Values below 0.1 indicate stable data. Values above 0.1 warn the team. Values above 0.25 trigger automated model retraining via CI/CD before precision decays."
-        )
-        st.markdown(
-            "Continuous comparison of inbound call parameters against original Model Training baselines to catch consumer behavior shifts.")
-
+        st.subheader(" 🚨 Production Feature Drift Monitor")
         drift_data = pd.DataFrame({
             "Feature Name": ["Monthly_Data_GB", "Estimated_Household_Size", "Autopay_Enabled", "Device_Type_Flag"],
             "Training Mean": [24.5, 2.1, "68%", "Baseline"],
@@ -265,24 +250,23 @@ with tab2:
 # TAB 3: FINANCIAL & VALUE REALIZATION
 # ==========================================
 with tab3:
-    st.header(
-        " 💎 Enterprise ROI & Financial Value Realization Model",
-        help="STRATEGIC SUMMARY:\nTranslates data science accuracy and low latency directly into corporate financial metrics that Finance, Marketing, and Operations can champion to justify enterprise rollout."
-    )
-    st.write("Simulate regional or national deployment value realizations utilizing the multi-offer agentic architecture.")
-
+    st.header(" 💎 Enterprise ROI & Financial Value Realization Model")
     st.write("---")
 
     calc_col1, calc_col2 = st.columns([1, 1])
 
     with calc_col1:
-        st.subheader(
-            " 🎛️ Interactive Value Parameter Modeler",
-            help="PITCH POINTS:\n- Cross-functional tool built to model live scenario changes directly in the boardroom.\n- Tweak the precision lift slider to show leadership how even tiny improvements scale significantly at national deployment levels."
-        )
+        st.subheader(" 🎛️ Interactive Value Parameter Modeler")
+
+        # ENHANCEMENT 3: Dynamic binding from Customer Store records
+        base_calls = 250000
+        if st.session_state.simulated:
+            # Shift slider default context dynamically depending on selected household size factors
+            if customer_record["Estimated_Household_Size"] >= 3:
+                base_calls = 450000
 
         monthly_calls = st.slider(
-            "Total Monthly Brand Segment Call Volume", 50000, 1000000, 250000, step=50000)
+            "Total Monthly Brand Segment Call Volume", 50000, 1000000, base_calls, step=50000)
         conversion_lift = st.slider(
             "Incremental Subscription Attachment Lift (Via Engine Routing)", 1.0, 10.0, 3.5, step=0.5)
         avg_perk_margin = st.number_input(
@@ -301,10 +285,7 @@ with tab3:
         annual_ops_savings = monthly_ops_savings * 12
 
     with calc_col2:
-        st.subheader(
-            " 🏆 Projected Business Optimization Yield",
-            help="PITCH POINTS:\n- Unlocks two separate value levers.\n- Lever 1: Top-Line Expansion via precise, automated subscription cross-selling.\n- Lever 2: Bottom-Line Cost Savings by programmatically suppressing pitches on low-propensity callers, saving 45 seconds of wasteful AHT per call."
-        )
+        st.subheader(" 🏆 Projected Business Optimization Yield")
 
         rev_1, rev_2 = st.columns(2)
         rev_1.metric(label="💵 Monthly Revenue Growth",
@@ -313,7 +294,6 @@ with tab3:
                      value=f"${annual_revenue_lift + annual_ops_savings:,.2f}", delta="Combined Yield", delta_color="normal")
 
         st.write("---")
-
         categories = ['Incremental Subscription Rev',
                       'Operational AHT Cost Recovery', 'Total Net Annual Impact']
         amounts = [annual_revenue_lift, annual_ops_savings,
@@ -321,11 +301,6 @@ with tab3:
 
         fig_bar = go.Figure([go.Bar(x=categories, y=amounts, marker_color=[
                             '#6366f1', '#475569', '#10b981'])])
-        fig_bar.update_layout(
-            title="Annual Corporate Value Realization Stack",
-            yaxis_title="Value Recaptured ($)",
-            height=300,
-            template="simple_white",
-            margin=dict(l=20, r=20, t=40, b=20)
-        )
+        fig_bar.update_layout(title="Annual Corporate Value Realization Stack",
+                              yaxis_title="Value ($)", height=300, template="simple_white")
         st.plotly_chart(fig_bar, use_container_width=True)
