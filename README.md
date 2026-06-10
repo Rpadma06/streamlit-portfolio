@@ -13,6 +13,12 @@ This project bridges the gap between deep MLOps engineering (Multi-Armed Bandits
 * **Visualizations:** Plotly Graph Objects (Interactive MLOps Drift & Portfolio Yield Charts)
 * **Environment:** Python 3.12+ / 3.14 (Isolated Virtual Environment)
 
+## 💡 Key Engineering Features Demonstrated
+
+* **Isolated Dependencies:** Managed completely via virtual environments for clean deployment.
+* **Interactive UI:** Leverages Plotly for dynamic, responsive data exploration.
+* **Optimized Performance:** Efficient data handling using Pandas dataframes.
+
 ---
 
 ## 🚀 Local Installation & Setup
@@ -25,6 +31,35 @@ git clone [https://github.com/Rpadma06/streamlit-portfolio.git](https://github.c
 cd streamlit-portfolio
 
 ---
+---
+
+## 🚀 Local Installation & Setup
+
+Want to run this prototype locally on your machine? Follow these simple steps:
+
+### 1. Clone and Navigate
+```bash
+git clone https://github.com
+cd streamlit-portfolio
+```
+
+### 2. Set Up a Virtual Environment
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Launch the Application
+```bash
+streamlit run app_clean.py
+```
+
+---
 
 ## 💡 Key Engineering Features Demonstrated
 
@@ -32,9 +67,9 @@ cd streamlit-portfolio
 * **Interactive UI:** Leverages Plotly for dynamic, responsive data exploration.
 * **Optimized Performance:** Efficient data handling using Pandas dataframes.
 
----
 
-## 📬 Contact & Portfolio
+
+### 📬 Contact & Portfolio
 
 * **Developer:** [Padmasree Ravi]
 * **GitHub:** [https://github.com/Rpadma06]
