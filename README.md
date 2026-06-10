@@ -24,9 +24,13 @@ Want to run this prototype locally on your machine? Follow these simple steps:
 git clone [https://github.com/Rpadma06/streamlit-portfolio.git](https://github.com/Rpadma06/streamlit-portfolio.git)
 cd streamlit-portfolio
 
----
+### 🚀 Key Engineering Features Demonstrated
 
-## 🤝 Contact & Portfolio
+Isolated Dependencies: Managed completely via virtual environments for clean deployment.
+Interactive UI: Leverages Plotly for dynamic, responsive data exploration.
+Optimized Performance: Efficient data handling using Pandas dataframes.
+
+### 🤝 Contact & Portfolio
 
 * **Developer:** Padmasree Ravi
 * **GitHub:** [github.com/Rpadma06](https://github.com/Rpadma06)
