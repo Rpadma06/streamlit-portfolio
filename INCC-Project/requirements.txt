@@ -7,3 +7,5 @@ numpy>=1.24.0
 
 # Interactive Financial & MLOps Data Visualization
 plotly>=5.18.0
+streamlit
+plotly
