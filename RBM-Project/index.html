@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telco Connect RCS RBM Prototype - Production Master</title>
+    <style>
+        :root {
+            --v-brand: #0f172a;
+            /* Sleek, corporate slate blue */
+            --bg-color: #f4f4f4;
+            --chat-bg: #ffffff;
+            --bot-msg: #f1f3f4;
+            --user-msg: #1a73e8;
+            --text-main: #202124;
+            --rcs-blue: #1a73e8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .demo-panel {
+            margin-right: 40px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .demo-panel h3 {
+            margin-top: 0;
+            color: var(--v-brand);
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .demo-panel h4 {
+            margin: 15px 0 10px 0;
+            color: #555;
+            font-size: 14px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .demo-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #333;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .demo-btn:hover {
+            background: var(--v-brand);
+        }
+
+        .phone {
+            width: 375px;
+            height: 812px;
+            background: var(--chat-bg);
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 12px solid #333;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--v-brand);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            margin-right: 15px;
+        }
+
+        .sender-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sender-name {
+            font-weight: bold;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .verified {
+            width: 14px;
+            height: 14px;
+            background: #34A853;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 6px;
+            position: relative;
+        }
+
+        .verified::after {
+            content: '✓';
+            color: white;
+            font-size: 10px;
+            position: absolute;
+            top: 1px;
+            left: 3px;
+        }
+
+        .sender-status {
+            font-size: 12px;
+            color: #5f6368;
+        }
+
+        .chat-area {
+            flex-grow: 1;
+            padding: 20px 20px 40px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: #fafafa;
+            scroll-behavior: smooth;
+        }
+
+        .msg-bubble {
+            background: var(--bot-msg);
+            padding: 12px 16px;
+            border-radius: 18px;
+            border-top-left-radius: 4px;
+            max-width: 85%;
+            font-size: 15px;
+            color: var(--text-main);
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease-in;
+            align-self: flex-start;
+        }
+
+        .user-bubble {
+            background: var(--user-msg);
+            color: white;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            border-bottom-right-radius: 4px;
+            border-bottom-left-radius: 18px;
+            align-self: flex-end;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 16px 20px;
+            align-items: center;
+            width: fit-content;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #888;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        .rich-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 280px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.4s ease-in;
+            align-self: flex-start;
+            margin-bottom: 5px;
+        }
+
+        .card-img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin: 0 0 8px 0;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: #5f6368;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .carousel {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scroll-snap-type: x mandatory;
+            max-width: 100%;
+            align-self: flex-start;
+        }
+
+        .carousel::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .carousel::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 4px;
+        }
+
+        .carousel .rich-card {
+            flex: 0 0 240px;
+            scroll-snap-align: start;
+            margin-bottom: 0;
+        }
+
+        .action-btns {
+            padding: 10px 15px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-reply {
+            background: transparent;
+            border: 1px solid #dadce0;
+            color: var(--rcs-blue);
+            padding: 10px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .btn-reply:hover {
+            background: #f8f9fa;
+        }
+
+        .btn-reply:disabled {
+            color: #aaa;
+            border-color: #eee;
+            cursor: default;
+            background: transparent;
+        }
+
+        .chip-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+            animation: fadeIn 0.5s ease-in;
+            align-self: flex-start;
+            margin-bottom: 10px;
+            transition: opacity 0.3s ease;
+        }
+
+        .chip-row.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .chip-btn {
+            background: white;
+            border: 1px solid #dadce0;
+            color: var(--rcs-blue);
+            padding: 8px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s;
+        }
+
+        .chip-btn:hover {
+            background: #f1f3f4;
+            border-color: #ccc;
+        }
+
+        .input-area {
+            padding: 15px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .input-box {
+            flex-grow: 1;
+            background: #f1f3f4;
+            border: none;
+            border-radius: 20px;
+            padding: 12px 15px;
+            color: #202124;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .send-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="demo-panel">
+        <h3>Trigger Simulation</h3>
+
+        <h4>Broadband & Fiber Scenarios</h4>
+        <button class="demo-btn" data-flow="installation">1. Fiber Installation (Smart Rules)</button>
+        <button class="demo-btn" data-flow="troubleshooting">2. Visual Troubleshooting</button>
+        <button class="demo-btn" data-flow="outage">3. Outage Notification</button>
+        <button class="demo-btn" data-flow="wifi-extender">4. Wi-Fi Extender Offer</button>
+
+        <h4>Mobile & Wireless Scenarios</h4>
+        <button class="demo-btn" data-flow="wireless-upgrade">5. Personalized Upgrade</button>
+        <button class="demo-btn" data-flow="wireless-cart">6. Abandoned Cart</button>
+        <button class="demo-btn" data-flow="wireless-review">7. Customer Care Review</button>
+
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+        <button class="demo-btn" style="background: #ccc; color: black;" id="resetBtn">Reset Chat</button>
+    </div>
+
+    <div class="phone">
+        <div class="header">
+            <div class="avatar">T</div>
+            <div class="sender-info">
+                <div class="sender-name">Telco Connect <span class="verified"></span></div>
+                <div class="sender-status">Verified Business Profile</div>
+            </div>
+        </div>
+
+        <div class="chat-area" id="chatWindow">
+            <div class="msg-bubble">
+                Welcome to the Omni-Channel RCS Prototype Demo. Use the panel on the left to trigger carrier scenarios,
+                or type a message below!
+            </div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="userInput" class="input-box" placeholder="RCS message">
+            <button class="send-btn" id="sendBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#1a73e8">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const chatWindow = document.getElementById('chatWindow');
+        const userInputBox = document.getElementById('userInput');
+        let activeTimeouts = [];
+
+        function scrollToBottom() {
+            setTimeout(() => { chatWindow.scrollTo({ top: chatWindow.scrollHeight, behavior: 'smooth' }); }, 50);
+        }
+
+        function clearChat() {
+            activeTimeouts.forEach(clearTimeout);
+            activeTimeouts = [];
+            chatWindow.innerHTML = '<div class="msg-bubble">Welcome to the Omni-Channel RCS Prototype Demo. Use the panel on the left to trigger carrier scenarios, or type a message below!</div>';
+        }
+
+        function disableOldChips() {
+            document.querySelectorAll('.chip-row:not(.disabled)').forEach(row => row.classList.add('disabled'));
+        }
+
+        function appendHTML(htmlContent) {
+            chatWindow.insertAdjacentHTML('beforeend', htmlContent);
+            scrollToBottom();
+        }
+
+        function simulateBotResponse(htmlContent, delay = 1000) {
+            const typingId = 'typing-' + Date.now();
+            const typingHtml = `<div id="${typingId}" class="msg-bubble typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+
+            appendHTML(typingHtml);
+
+            const timeout = setTimeout(() => {
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+                appendHTML(htmlContent);
+            }, delay);
+            activeTimeouts.push(timeout);
+        }
+
+        function sendUserMessage() {
+            const text = userInputBox.value.trim();
+            if (text === '') return;
+
+            disableOldChips();
+            appendHTML(`<div class="msg-bubble user-bubble">${text}</div>`);
+            userInputBox.value = '';
+
+            simulateBotResponse(`
+                <div class="msg-bubble">
+                    I am a virtual demonstration assistant. <br><br>
+                    In a production environment, this event loop routes directly to a live account management webhook or multi-channel customer routing layer.
+                </div>
+            `, 1200);
+        }
+
+        function postUserReply(text) {
+            disableOldChips();
+            appendHTML(`<div class="msg-bubble user-bubble">${text}</div>`);
+        }
+
+        function handleRating(stars, context = 'store') {
+            postUserReply('⭐'.repeat(stars) + ` ${stars} Stars`);
+            simulateBotResponse(`
+                <div class="msg-bubble">
+                    Thank you for your feedback! It helps us improve our customer experience.
+                </div>
+            `, 1000);
+        }
+
+        // Event listeners for simulation buttons
+        document.querySelectorAll('.demo-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const flow = e.target.getAttribute('data-flow');
+                disableOldChips();
+
+                if (flow === 'installation') {
+                    simulateBotResponse(`<div class="msg-bubble">Your high-speed fiber installation is scheduled for tomorrow between 8 AM - 12 PM.</div>`);
+                }
+                // Placeholder routes for remaining flows can be added here
+            });
+        });
+
+        document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
+        document.getElementById('userInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendUserMessage(); });
+        document.getElementById('resetBtn').addEventListener('click', clearChat);
+    </script>
+</body>
+
+</html>
