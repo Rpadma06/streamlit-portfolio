@@ -503,6 +503,8 @@
         }
 
         // Event listeners for simulation buttons
+        // Find this section at the bottom of your index.html file:
+        // Event listeners for simulation buttons
         document.querySelectorAll('.demo-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const flow = e.target.getAttribute('data-flow');
@@ -510,14 +512,22 @@
 
                 if (flow === 'installation') {
                     simulateBotResponse(`<div class="msg-bubble">Your high-speed fiber installation is scheduled for tomorrow between 8 AM - 12 PM.</div>`);
+                } else if (flow === 'troubleshooting') {
+                    simulateBotResponse(`<div class="msg-bubble">I've initiated a remote line diagnostic. Please upload a photo of your router lights using the clip icon if they are flashing amber.</div>`);
+                } else if (flow === 'outage') {
+                    simulateBotResponse(`<div class="msg-bubble">🚨 <strong>Network Alert:</strong> We identified a service disruption in your neighborhood. Crews are on-site, and full recovery is expected within 2 hours.</div>`);
+                } else if (flow === 'wifi-extender') {
+                    simulateBotResponse(`<div class="msg-bubble">Based on your coverage profile, you qualify for a premium Wi-Fi extender at $0/mo. Would you like us to ship this to your home address?</div>`);
+                } else if (flow === 'wireless-upgrade') {
+                    simulateBotResponse(`<div class="msg-bubble">🎉 Good news! Your line is fully eligible for an annual device upgrade with an exclusive $300 trade-in credit applied automatically.</div>`);
+                } else if (flow === 'wireless-cart') {
+                    simulateBotResponse(`<div class="msg-bubble">We noticed you left some items in your checkout cart. Complete your device order within the next 24 hours to secure free express shipping!</div>`);
+                } else if (flow === 'wireless-review') {
+                    simulateBotResponse(`<div class="msg-bubble">Thank you for chatting with our care specialist today. On a scale of 1-5 stars, how would you rate your support experience?</div>`);
                 }
-                // Placeholder routes for remaining flows can be added here
             });
         });
-
-        document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
-        document.getElementById('userInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendUserMessage(); });
-        document.getElementById('resetBtn').addEventListener('click', clearChat);
+        // ... your event listener loop ends here ...
     </script>
 </body>
 
