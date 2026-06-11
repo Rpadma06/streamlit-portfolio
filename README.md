@@ -13,11 +13,14 @@ This project bridges the gap between deep MLOps engineering (Multi-Armed Bandits
 * **Visualizations:** Plotly Graph Objects (Interactive MLOps Drift & Portfolio Yield Charts)
 * **Environment:** Python 3.12+ / 3.14 (Isolated Virtual Environment)
 
+---
+
 ## 💡 Key Engineering Features Demonstrated
 
-* **Isolated Dependencies:** Managed completely via virtual environments for clean deployment.
-* **Interactive UI:** Leverages Plotly for dynamic, responsive data exploration.
-* **Optimized Performance:** Efficient data handling using Pandas dataframes.
+* **Vectorized Multi-Offer Inference Engine:** Replaced legacy heuristic hardcoded conditional logic with an enterprise-grade `NumPy` mathematical dot product matrix mapping a customer feature vector against algorithmic weights.
+* **Deterministic UI Lifecycle State Management:** Tied a custom clean session state callback (`on_change`) to the feature-store selection mechanism, preventing stale telemetry data from persisting across simulated interactions.
+* **Contextual Business Value Mapping:** Programmatically bound user propensity outputs to an interactive financial parameter optimizer to simulate top-line and bottom-line handle time (AHT) cost recovery.
+* **Isolated Dependencies:** Managed completely via virtual environments for clean deployment and architectural stability.
 
 ---
 
@@ -26,40 +29,6 @@ This project bridges the gap between deep MLOps engineering (Multi-Armed Bandits
 Want to run this prototype locally on your machine? Follow these simple steps:
 
 ### 1. Clone and Navigate
+```bash
 git clone [https://github.com/Rpadma06/streamlit-portfolio.git](https://github.com/Rpadma06/streamlit-portfolio.git)
 cd streamlit-portfolio
-
----
-
-## 🚀 Local Installation & Setup
-
-Want to run this prototype locally on your machine? Follow these simple steps:
-
-### 1. Clone and Navigate
-
-git clone https://github.com
-cd streamlit-portfolio
-
-### 2. Set Up a Virtual Environment
-
-python3 -m venv .venv
-source .venv/bin/activate
-
-
-### 3. Install Dependencies
-
-pip install -r requirements.txt
-
-
-### 4. Launch the Application
-
-streamlit run app_clean.py
-
-
----
-
-### 📬 Contact & Portfolio
-
-* **Developer:** [Padmasree Ravi]
-* **GitHub:** [https://github.com/Rpadma06]
-* **LinkedIn:** [www.linkedin.com/in/06padmasree]
