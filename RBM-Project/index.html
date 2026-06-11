@@ -225,4 +225,129 @@
 
         function simulateBotResponse(htmlContent, delay = 1000) {
             const typingId = 'typing-' + Date.now();
-            const typingHtml = `<div id="${typingId}" class="msg-bubble typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing
+            const typingHtml = `<div id="${typingId}" class="msg-bubble typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+            
+            appendHTML(typingHtml);
+            
+            const timeout = setTimeout(() => {
+                const typingEl = document.getElementById(typingId);
+                if (typingEl) typingEl.remove();
+                appendHTML(htmlContent);
+            }, delay);
+            activeTimeouts.push(timeout);
+        }
+
+        function sendUserMessage() {
+            const text = userInputBox.value.trim();
+            if (text === '') return;
+            
+            disableOldChips();
+            appendHTML(`<div class="msg-bubble user-bubble">${text}</div>`);
+            userInputBox.value = '';
+
+            simulateBotResponse(`
+                <div class="msg-bubble">
+                    I am a virtual demo assistant. <br><br>
+                    For real account assistance, please visit our online help center or access your primary customer dashboard.
+                </div>
+            `, 1200);
+        }
+
+        function postUserReply(text) {
+            disableOldChips();
+            appendHTML(`<div class="msg-bubble user-bubble">${text}</div>`);
+        }
+
+        function handleCustomAction(replyText, systemNoticeHtml) {
+            postUserReply(replyText);
+            if (systemNoticeHtml) {
+                simulateBotResponse(systemNoticeHtml, 1000);
+            }
+        }
+
+        document.querySelectorAll('.demo-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const flow = e.target.getAttribute('data-flow');
+                if (!flow) return;
+                disableOldChips();
+
+                if (flow === 'installation') {
+                    simulateBotResponse(`
+                        <div class="msg-bubble">Your Fiber installation is confirmed for tomorrow between 8:00 AM - 12:00 PM.</div>
+                        <div class="chip-row">
+                            <button class="chip-btn" onclick="handleCustomAction('Reschedule appointment', '<div class=\'msg-bubble\'>Let\'s check alternative slots. Our next available open day is Friday. Select a morning or afternoon arrival window.</div>')">📅 Reschedule</button>
+                            <button class="chip-btn" onclick="handleCustomAction('View technician map', '<div class=\'msg-bubble\'>Your technician tracking link will activate precisely at 7:30 AM tomorrow.</div>')">📍 Track Tech</button>
+                        </div>
+                    `);
+                } else if (flow === 'troubleshooting') {
+                    simulateBotResponse(`
+                        <div class="msg-bubble">I've completed an automated diagnostic on your Home Gateway router. Let's look at the front panel indicators.</div>
+                        <div class="rich-card">
+                            <div class="card-img">TELCO CONNECT GATEWAY</div>
+                            <div class="card-content">
+                                <div class="card-title">Front LED Check</div>
+                                <div class="card-desc">Are your front display lights solid white, blinking blue, or flashing amber?</div>
+                            </div>
+                        </div>
+                        <div class="chip-row">
+                            <button class="chip-btn" onclick="handleCustomAction('Flashing Amber', '<div class=\'msg-bubble\'>Flashing amber signifies a loss of your fiber network connection. Unplug your ONT power cable for 30 seconds to restart.</div>')">🟠 Flashing Amber</button>
+                            <button class="chip-btn" onclick="handleCustomAction('Solid White', '<div class=\'msg-bubble\'>Solid white means your system connection is normal. Let\'s check your device network password settings.</div>')">⚪ Solid White</button>
+                        </div>
+                    `);
+                } else if (flow === 'outage') {
+                    simulateBotResponse(`
+                        <div class="msg-bubble">🚨 <strong>Network Event Update:</strong> Local teams identified an equipment interruption affecting broadband routing nodes in your postal zip code. Repair crews are actively working on it.</div>
+                    `);
+                } else if (flow === 'wifi-extender') {
+                    simulateBotResponse(`
+                        <div class="msg-bubble">Optimize your home infrastructure profile. Based on area performance analytics, you qualify for an advanced whole-home Wi-Fi Extender.</div>
+                        <div class="chip-row">
+                            <button class="chip-btn" onclick="handleCustomAction('Ship to home ($0/mo)', '<div class=\'msg-bubble\'>Order confirmed! Your equipment package is on its way to your listed service address. Track delivery in your customer hub.</div>')">📦 Ship to Home ($0/mo)</button>
+                            <button class="chip-btn" onclick="handleCustomAction('Decline offer', '<div class=\'msg-bubble\'>No problem at all! You can access this deal anytime within your regular portal dashboards.</div>')">No Thanks</button>
+                        </div>
+                    `);
+                } else if (flow === 'wireless-upgrade') {
+                    simulateBotResponse(`
+                        <div class="msg-bubble">🎉 Loyalty Bonus: Your smartphone line is eligible for a full trade-in value credit of $800 toward our flagship wireless 5G models. Discover this month\'s releases:</div>
+                        <div class="carousel">
+                            <div class="rich-card">
+                                <div class="card-img">PREMIUM MODEL A</div>
+                                <div class="card-content">
+                                    <div class="card-title">Premium Model Pro</div>
+                                    <div class="card-desc">Get it for $0/mo after eligible device trade-in on your current plan.</div>
+                                    <button class="chip-btn" style="width:100%; margin-top:10px;" onclick="handleCustomAction('Select Model Pro', '<div class=\'msg-bubble\'>Excellent choice. Let\'s evaluate your device trade-in checklist...</div>')">Configure Now</button>
+                                </div>
+                            </div>
+                            <div class="rich-card">
+                                <div class="card-img">ULTRA MODEL B</div>
+                                <div class="card-content">
+                                    <div class="card-title">Ultra Flagship Edition</div>
+                                    <div class="card-desc">$5.99/mo with your line credit tier. Ultimate zoom sensor configuration.</div>
+                                    <button class="chip-btn" style="width:100%; margin-top:10px;" onclick="handleCustomAction('Select Ultra Flagship', '<div class=\'msg-bubble\'>Setting up configuration variables for your new Ultra Flagship order...</div>')">Configure Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                } else if (flow === 'wireless-cart') {
+                    simulateBotResponse(`
+                        <div class="msg-bubble">We noticed you left some upgrade items in your shopping cart! Finish checking out within the next 12 hours, and we\'ll instantly apply free priority shipping.</div>
+                    `);
+                } else if (flow === 'wireless-review') {
+                    simulateBotResponse(`
+                        <div class="msg-bubble">Thank you for working with a support specialist. On a scale of 1 to 5, how would you rate your account resolution experience today?</div>
+                        <div class="chip-row">
+                            <button class="chip-btn" onclick="handleCustomAction('⭐⭐⭐⭐⭐ 5 Stars', '<div class=\'msg-bubble\'>Thank you for giving us a top rating! Have an exceptional day.</div>')">5 ⭐</button>
+                            <button class="chip-btn" onclick="handleCustomAction('⭐⭐⭐⭐ 4 Stars', '<div class=\'msg-bubble\'>Thank you for your response! We appreciate your valuable partnership.</div>')">4 ⭐</button>
+                            <button class="chip-btn" onclick="handleCustomAction('3 Stars or less', '<div class=\'msg-bubble\'>Thank you for the note. We\'ll share this directly with our management loops to improve.</div>')">3 ⭐ or less</button>
+                        </div>
+                    `);
+                }
+            });
+        });
+
+        document.getElementById('sendBtn').addEventListener('click', sendUserMessage);
+        document.getElementById('userInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') sendUserMessage(); });
+        document.getElementById('resetBtn').addEventListener('click', clearChat);
+    </script>
+</body>
+</html>
